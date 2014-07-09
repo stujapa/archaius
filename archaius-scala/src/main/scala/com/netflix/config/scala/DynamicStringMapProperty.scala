@@ -15,7 +15,7 @@
  */
 package com.netflix.config.scala
 
-import com.netflix.config.{DynamicStringMapProperty => jDynamicStringMapProperty}
+import com.netflix.config.{DynamicListProperty, DynamicStringMapProperty => jDynamicStringMapProperty}
 import java.util.{Map => jMap}
 import scala.collection.JavaConverters._
 
@@ -24,8 +24,17 @@ import scala.collection.JavaConverters._
  * Date: 9/25/12
  */
 object DynamicStringMapProperty {
+  def apply(propertyName: String, defaultValue: Map[String, String]) =
+    new DynamicStringMapProperty(propertyName, defaultValue, DynamicListProperty.DEFAULT_DELIMITER)
+
   def apply(propertyName: String, defaultValue: Map[String, String], delimiterRegex: String) =
     new DynamicStringMapProperty(propertyName, defaultValue, delimiterRegex)
+
+  def apply(propertyName: String, defaultValue: Map[String, String], callback: () => Unit) = {
+    val p = new DynamicStringMapProperty(propertyName, defaultValue, DynamicListProperty.DEFAULT_DELIMITER)
+    p.addCallback(callback)
+    p
+  }
 
   def apply(propertyName: String, defaultValue: Map[String, String], delimiterRegex: String, callback: () => Unit) = {
     val p = new DynamicStringMapProperty(propertyName, defaultValue, delimiterRegex)

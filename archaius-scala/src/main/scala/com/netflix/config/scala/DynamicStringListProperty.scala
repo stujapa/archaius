@@ -15,7 +15,7 @@
  */
 package com.netflix.config.scala
 
-import com.netflix.config.{DynamicStringListProperty => jDynamicStringListProperty}
+import com.netflix.config.{DynamicListProperty, DynamicStringListProperty => jDynamicStringListProperty}
 import java.util.{List => jList}
 import scala.collection.JavaConverters._
 
@@ -24,8 +24,17 @@ import scala.collection.JavaConverters._
  * Date: 9/25/12
  */
 object DynamicStringListProperty {
+  def apply(propertyName: String, defaultValue: List[String]) =
+    new DynamicStringListProperty(propertyName, defaultValue, DynamicListProperty.DEFAULT_DELIMITER)
+
   def apply(propertyName: String, defaultValue: List[String], delimiterRegex: String) =
     new DynamicStringListProperty(propertyName, defaultValue, delimiterRegex)
+
+  def apply(propertyName: String, defaultValue: List[String], callback: () => Unit) = {
+    val p = new DynamicStringListProperty(propertyName, defaultValue, DynamicListProperty.DEFAULT_DELIMITER)
+    p.addCallback(callback)
+    p
+  }
 
   def apply(propertyName: String, defaultValue: List[String], delimiterRegex: String, callback: () => Unit) = {
     val p = new DynamicStringListProperty(propertyName, defaultValue, delimiterRegex)
